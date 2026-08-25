@@ -14,6 +14,7 @@ from Qt.QtWidgets import (
     QSizePolicy,
     QTabBar,
 )
+from Qt.QtCompat import QMouseEvent, QDragMoveEvent
 
 from preditor import osystem
 
@@ -236,7 +237,8 @@ class DragTabBar(QTabBar):
 
         # Check if the mouse has moved outside of the widget, if not, let
         # the QTabBar handle the internal tab movement.
-        event_pos = event.pos()
+
+        event_pos = QMouseEvent.position(event).toPoint()
         global_pos = self.mapToGlobal(event_pos)
         bar_geo = QRect(self.mapToGlobal(self.pos()), self.size())
         inside = bar_geo.contains(global_pos)
@@ -268,7 +270,8 @@ class DragTabBar(QTabBar):
 
     def mousePressEvent(self, event):  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton and not self._mime_data:
-            tab_index = self.tabAt(event.pos())
+            pos = QMouseEvent.position(event).toPoint()
+            tab_index = self.tabAt(pos)
 
             # While we don't remove the tab on mouse press, capture its tab image
             # and attach it to the mouse. This also stores info needed to handle
@@ -312,7 +315,8 @@ class DragTabBar(QTabBar):
         # the current tab so users can easily drop inside that tab.
         if not event.mimeData().hasFormat(self.mime_type):
             event.accept()
-            tab_index = self.tabAt(event.pos())
+            pos = QDragMoveEvent().position(event).toPoint()
+            tab_index = self.tabAt(pos)
             if tab_index == -1:
                 tab_index = self.count() - 1
             if self.currentIndex() != tab_index:

@@ -18,6 +18,7 @@ from Qt.QtGui import (
     QTextCursor,
 )
 from Qt.QtWidgets import QAction, QApplication, QTextEdit, QWidget
+from Qt.QtCompat import QMouseEvent
 
 from .. import instance, resourcePath, stream
 from ..constants import StreamType
@@ -136,6 +137,7 @@ class ConsoleBase(QTextEdit):
     def contextMenuEvent(self, event):
         """Builds a custom right click menu to show."""
         # Create the standard menu and allow subclasses to customize it
+        # The event.pos method for QContextMenuEvent was NOT removed
         menu = self.createStandardContextMenu(event.pos())
         menu = self.update_context_menu(menu)
         if self.controller:
@@ -432,7 +434,8 @@ class ConsoleBase(QTextEdit):
         """Overload of mousePressEvent to change mouse pointer to indicate it is
         over a clickable error hyperlink.
         """
-        if self.anchorAt(event.pos()):
+        pos = QMouseEvent.position(event).toPoint()
+        if self.anchorAt(pos):
             self.viewport().setCursor(Qt.CursorShape.PointingHandCursor)
         else:
             self.viewport().unsetCursor()
@@ -444,8 +447,9 @@ class ConsoleBase(QTextEdit):
         select text), we check if user clicked an error hyperlink.
         """
         left = event.button() == Qt.MouseButton.LeftButton
-        anchor = self.anchorAt(event.pos())
-        self.mousePressPos = event.pos()
+        pos = QMouseEvent.position(event).toPoint()
+        anchor = self.anchorAt(pos)
+        self.mousePressPos = pos
 
         if left and anchor:
             event.ignore()
@@ -457,9 +461,10 @@ class ConsoleBase(QTextEdit):
         """Overload of mouseReleaseEvent to capture if user has left clicked... Check if
         click position is the same as release position, if so, call errorHyperlink.
         """
-        samePos = event.pos() == self.mousePressPos
+        pos = QMouseEvent.position(event).toPoint()
+        samePos = pos == self.mousePressPos
         left = event.button() == Qt.MouseButton.LeftButton
-        anchor = self.anchorAt(event.pos())
+        anchor = self.anchorAt(pos)
 
         if samePos and left and anchor:
             self.errorHyperlink(anchor)
