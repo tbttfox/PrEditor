@@ -640,7 +640,7 @@ class DocumentEditor(QsciScintilla):
             window.uiLanguageDDL.blockSignals(False)
 
     def lineMarginWidth(self):
-        return self.marginWidth(self.SymbolMargin)
+        return self.marginWidth(QsciScintilla.MarginType.SymbolMargin)
 
     def filename(self):
         return self._filename
@@ -932,14 +932,14 @@ class DocumentEditor(QsciScintilla):
         in the file.
         """
         for line in input:
-            marker = self.markerDefine(self.Circle)
+            marker = self.markerDefine(QsciScintilla.MarkerSymbol.Circle)
             self.markerAdd(line, marker)
 
     def markerToggle(self):
         line, index = self.getCursorPosition()
         markers = self.markersAtLine(line)
         if not markers:
-            marker = self.markerDefine(self.Circle)
+            marker = self.markerDefine(QsciScintilla.MarkerSymbol.Circle)
             self.markerAdd(line, marker)
         else:
             self.markerDelete(line)
@@ -1147,7 +1147,7 @@ class DocumentEditor(QsciScintilla):
         )
 
     def setLineMarginWidth(self, width):
-        self.setMarginWidth(self.SymbolMargin, width)
+        self.setMarginWidth(QsciScintilla.MarginType.SymbolMargin, width)
 
     def setMarginsFont(self, font):
         super(DocumentEditor, self).setMarginsFont(font)
@@ -1200,12 +1200,12 @@ class DocumentEditor(QsciScintilla):
 
     def setShowFolding(self, state):
         if state:
-            self.setFolding(self.BoxedTreeFoldStyle)
+            self.setFolding(QsciScintilla.FoldStyle.BoxedTreeFoldStyle)
         else:
-            self.setFolding(self.NoFoldStyle)
+            self.setFolding(QsciScintilla.FoldStyle.NoFoldStyle)
 
     def setShowLineNumbers(self, state):
-        self.setMarginLineNumbers(self.SymbolMargin, state)
+        self.setMarginLineNumbers(QsciScintilla.MarginType.SymbolMargin, state)
 
     def setShowSmartHighlighting(self, state):
         self.delayable_engine.set_delayable_enabled('smart_highlight', state)
@@ -1459,10 +1459,10 @@ class DocumentEditor(QsciScintilla):
         self.updateColorScheme()
 
     def showFolding(self):
-        return self.folding() != self.NoFoldStyle
+        return self.folding() != QsciScintilla.FoldStyle.NoFoldStyle
 
     def showLineNumbers(self):
-        return self.marginLineNumbers(self.SymbolMargin)
+        return self.marginLineNumbers(QsciScintilla.MarginType.SymbolMargin)
 
     def showSmartHighlighting(self):
         return self.delayable_engine.delayable_enabled('smart_highlight')
