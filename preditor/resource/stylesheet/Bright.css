@@ -74,3 +74,65 @@ DragTabBar {
     qproperty-orphanedColor: "crimson";
     qproperty-orphanedLinkedColor: "firebrick";
 }
+
+/* ------------------------------------------------------------------------- */
+/* QCodeSitter (tree-sitter workbox) rich color scheme.                       */
+/*                                                                           */
+/* QScintilla's DocumentEditor is styled by the `DocumentEditor` block above  */
+/* and is completely unaffected by this block - Qt only applies a type        */
+/* selector to that class and its subclasses. CodeSitterTextEdit is not a     */
+/* DocumentEditor, so it needs its own rules. The names shared with the       */
+/* DocumentEditor block are kept in sync on purpose; the `color*` names below */
+/* the separator are additional tree-sitter groups QScintilla has no concept  */
+/* of. Any property left out here just falls back to QCodeSitter's bundled    */
+/* light theme, so partial overrides are fine.                                */
+/* ------------------------------------------------------------------------- */
+CodeSitterTextEdit {
+	qproperty-paperDefault: "white";
+	qproperty-pyMarginsForegroundColor: "black";
+	qproperty-pyMarginsBackgroundColor: rgb(224, 224, 224);
+	qproperty-pySelectionBackgroundColor: rgb(192, 192, 192);
+	qproperty-pySelectionForegroundColor: "black";
+	qproperty-pyCaretBackgroundColor: "white";
+	qproperty-pyCaretForegroundColor: "black";
+	qproperty-pyMatchedBraceBackgroundColor: rgb(100, 225, 100);
+	qproperty-pyMatchedBraceForegroundColor: "black";
+	qproperty-pyUnmatchedBraceBackgroundColor: "white";
+	qproperty-pyUnmatchedBraceForegroundColor: "blue";
+	qproperty-pyEdgeColor: rgb(100, 45, 45);
+	qproperty-pyIndentationGuidesBackgroundColor: "white";
+	qproperty-pyIndentationGuidesForegroundColor: "black";
+	qproperty-pyMarkerBackgroundColor: "white";
+	qproperty-pyMarkerForegroundColor: "black";
+	qproperty-foldMarginsBackgroundColor: rgb(224, 224, 224);
+	qproperty-foldMarginsForegroundColor: rgb(224, 224, 224);
+	qproperty-braceBadForeground: "white";
+	qproperty-braceBadBackground: rgb(180, 100, 100);
+
+	qproperty-colorDefault: rgb(75, 80, 91);
+	qproperty-colorComment: rgb(135, 144, 160);
+	qproperty-colorCommentBlock: rgb(135, 144, 160);
+	qproperty-colorNumber: rgb(96, 142, 50);
+	qproperty-colorString: rgb(96, 142, 50);
+	qproperty-colorTripleQuotedString: rgb(96, 142, 50);
+	qproperty-colorKeyword: rgb(176, 92, 204);
+	qproperty-colorMethod: rgb(80, 121, 190);
+	qproperty-colorFunction: rgb(80, 121, 190);
+	qproperty-colorOperator: rgb(176, 92, 204);
+	qproperty-colorIdentifier: rgb(208, 88, 88);
+	qproperty-colorSmartHighlight: rgb(118, 175, 111);
+	qproperty-colorDecorator: rgb(190, 126, 5);
+
+	/* Richer tree-sitter groups - ignored by QScintilla */
+	qproperty-colorBoolean: rgb(96, 142, 50);
+	qproperty-colorEscape: rgb(190, 126, 5);
+	qproperty-colorPunctuation: rgb(135, 144, 160);
+	qproperty-colorFunctionBuiltin: rgb(80, 121, 190);
+	qproperty-colorMember: rgb(58, 139, 132);
+	qproperty-colorParameter: rgb(208, 88, 88);
+	qproperty-colorBuiltin: rgb(58, 139, 132);
+	qproperty-colorConstant: rgb(208, 88, 88);
+	qproperty-colorType: rgb(190, 126, 5);
+	qproperty-colorTypeBuiltin: rgb(190, 126, 5);
+	qproperty-colorModule: rgb(190, 126, 5);
+}

@@ -208,3 +208,65 @@ DragTabBar {
     qproperty-orphanedColor: "pink";
     qproperty-orphanedLinkedColor: "plum";
 }
+
+/* ------------------------------------------------------------------------- */
+/* QCodeSitter (tree-sitter workbox) rich color scheme.                       */
+/*                                                                           */
+/* QScintilla's DocumentEditor is styled by the `DocumentEditor` block above  */
+/* and is completely unaffected by this block - Qt only applies a type        */
+/* selector to that class and its subclasses. CodeSitterTextEdit is not a     */
+/* DocumentEditor, so it needs its own rules. The names shared with the       */
+/* DocumentEditor block are kept in sync on purpose; the `color*` names below */
+/* the separator are additional tree-sitter groups QScintilla has no concept  */
+/* of. Any property left out here just falls back to QCodeSitter's bundled    */
+/* dark theme, so partial overrides are fine.                                 */
+/* ------------------------------------------------------------------------- */
+CodeSitterTextEdit {
+  qproperty-paperDefault: rgb(40, 42, 54);
+  qproperty-pyMarginsForegroundColor: rgb(202, 202, 202);
+  qproperty-pyMarginsBackgroundColor: rgb(70, 70, 73);
+  qproperty-pySelectionBackgroundColor: rgb(90, 90, 93);
+  qproperty-pySelectionForegroundColor: rgb(240, 240, 240);
+  qproperty-pyCaretBackgroundColor: rgb(70, 70, 73);
+  qproperty-pyCaretForegroundColor: rgb(255, 255, 255);
+  qproperty-pyMatchedBraceBackgroundColor: rgb(60, 60, 63);
+  qproperty-pyMatchedBraceForegroundColor: rgb(240, 240, 240);
+  qproperty-pyUnmatchedBraceBackgroundColor: rgb(70, 70, 73);
+  qproperty-pyUnmatchedBraceForegroundColor: rgb(200, 180, 180);
+  qproperty-pyEdgeColor: rgb(100, 45, 45);
+  qproperty-pyIndentationGuidesBackgroundColor: rgb(70, 70, 73);
+  qproperty-pyIndentationGuidesForegroundColor: rgb(102, 153, 204);
+  qproperty-pyMarkerBackgroundColor: rgb(45, 255, 45);
+  qproperty-pyMarkerForegroundColor: rgb(200, 0, 200);
+  qproperty-foldMarginsBackgroundColor: rgb(60, 60, 63);
+  qproperty-foldMarginsForegroundColor: rgb(60, 60, 63);
+  qproperty-braceBadForeground: rgb(255, 255, 255);
+  qproperty-braceBadBackground: rgb(100, 60, 60);
+
+  qproperty-colorDefault: rgb(248, 248, 242);
+  qproperty-colorComment: rgb(98, 114, 164);
+  qproperty-colorCommentBlock: rgb(98, 114, 164);
+  qproperty-colorNumber: rgb(189, 147, 249);
+  qproperty-colorString: rgb(241, 250, 140);
+  qproperty-colorTripleQuotedString: rgb(139, 233, 253);
+  qproperty-colorKeyword: rgb(255, 121, 198);
+  qproperty-colorMethod: rgb(80, 250, 123);
+  qproperty-colorFunction: rgb(80, 250, 123);
+  qproperty-colorOperator: rgb(255, 121, 198);
+  qproperty-colorIdentifier: rgb(248, 248, 242);
+  qproperty-colorSmartHighlight: rgb(255, 255, 165);
+  qproperty-colorDecorator: rgb(139, 233, 253);
+
+  /* Richer tree-sitter groups - ignored by QScintilla */
+  qproperty-colorBoolean: rgb(189, 147, 249);
+  qproperty-colorEscape: rgb(139, 233, 253);
+  qproperty-colorPunctuation: rgb(248, 248, 242);
+  qproperty-colorFunctionBuiltin: rgb(139, 233, 253);
+  qproperty-colorMember: rgb(255, 184, 108);
+  qproperty-colorParameter: rgb(255, 184, 108);
+  qproperty-colorBuiltin: rgb(189, 147, 249);
+  qproperty-colorConstant: rgb(189, 147, 249);
+  qproperty-colorType: rgb(164, 255, 255);
+  qproperty-colorTypeBuiltin: rgb(139, 233, 253);
+  qproperty-colorModule: rgb(255, 184, 108);
+}
