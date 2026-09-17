@@ -183,6 +183,58 @@ DocumentEditor {
   qproperty-paperDecorator: rgb(70, 70, 73);
 }
 
+/* Tree-sitter based editors (ie QCodeSitter). The hl properties are named after the
+tree-sitter highlight captures. Any capture that isn't defined falls back to its
+parent capture. For example hlKeywordReturn falls back to hlKeyword. */
+CodeSitterTextEdit {
+  qproperty-guiBg: rgb(70, 70, 73);
+  qproperty-guiBgDim: rgb(60, 60, 63);
+  qproperty-guiFg: rgb(212, 212, 212);
+  qproperty-guiFgDim: rgb(150, 150, 153);
+  qproperty-guiGutter: rgb(60, 60, 63);
+  qproperty-guiGutterFg: rgb(150, 150, 153);
+  qproperty-guiHlDim: rgb(95, 95, 100);
+  qproperty-guiMatchHl: rgba(75, 180, 0, 70);
+  qproperty-guiMenu: rgb(55, 55, 58);
+  qproperty-guiOutsideBg: rgb(60, 60, 63);
+  qproperty-guiPairHl: rgb(105, 105, 110);
+  qproperty-guiPrimaryCursor: rgb(255, 255, 255);
+  qproperty-guiSecondaryCursor: rgb(180, 180, 180);
+  qproperty-guiSelection: rgb(95, 95, 100);
+  qproperty-guiSelectionColor: rgb(95, 95, 100);
+  qproperty-guiVisual: rgb(85, 85, 90);
+
+  qproperty-hlAttribute: rgb(240, 100, 102);
+  qproperty-hlBoolean: rgb(174, 129, 255);
+  qproperty-hlCharacterSpecial: rgb(0, 200, 200);
+  qproperty-hlComment: rgb(0, 160, 0);
+  qproperty-hlConstant: rgb(174, 129, 255);
+  qproperty-hlConstructor: rgb(102, 217, 239);
+  qproperty-hlFunction: rgb(255, 204, 102);
+  qproperty-hlFunctionBuiltin: rgb(102, 217, 239);
+  qproperty-hlKeyword: rgb(250, 24, 110);
+  qproperty-hlKeywordFunction: rgb(22, 160, 250);
+  qproperty-hlKeywordType: rgb(22, 160, 250);
+  qproperty-hlModule: rgb(180, 210, 115);
+  qproperty-hlNone: rgb(174, 129, 255);
+  qproperty-hlNumber: rgb(0, 200, 200);
+  qproperty-hlOperator: rgb(204, 204, 204);
+  qproperty-hlPunctuation: rgb(204, 204, 204);
+  qproperty-hlPunctuationSpecial: rgb(250, 24, 110);
+  qproperty-hlString: rgb(240, 135, 0);
+  qproperty-hlStringDocumentation: rgb(117, 113, 94);
+  qproperty-hlStringEscape: rgb(0, 200, 200);
+  qproperty-hlStringRegexp: rgb(240, 100, 102);
+  qproperty-hlType: rgb(102, 217, 239);
+  qproperty-hlVariable: rgb(22, 160, 250);
+  qproperty-hlVariableBuiltin: rgb(174, 129, 255);
+  qproperty-hlVariableMember: rgb(140, 200, 250);
+  qproperty-hlVariableParameter: rgb(130, 200, 255);
+
+  qproperty-hlItalic: "keyword.function string.documentation type.builtin variable.builtin variable.parameter";
+  qproperty-hlBold: "type.definition";
+}
+
 
 ConsolePrEdit, ErrorDialog {
   qproperty-errorMessageColor: rgb(255, 0, 0);
