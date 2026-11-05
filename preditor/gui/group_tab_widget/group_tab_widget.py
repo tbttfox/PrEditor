@@ -80,7 +80,7 @@ class GroupTabWidget(OneTabWidget):
         sp.setVerticalPolicy(QSizePolicy.Policy.Preferred)
         button.setSizePolicy(sp)
 
-    def add_new_tab(self, group, title=None, prefs=None):
+    def add_new_tab(self, group, title=None, prefs=None, lazy=False):
         """Adds a new tab to the requested group, creating the group if the group
         doesn't exist.
 
@@ -91,10 +91,14 @@ class GroupTabWidget(OneTabWidget):
                 If True is passed, then the current group tab is used.
             title (str, optional): The name to give the newly created tab inside
                 the group.
+            prefs (dict, optional): Kwargs used to create the editor.
+            lazy (bool, optional): Add a cheap `WorkboxPlaceholder` instead of
+                creating the editor. The editor is created when the tab is
+                first shown, or when something needs it.
 
         Returns:
             GroupedTabWidget: The tab group for this group.
-            WorkboxMixin: The new text editor.
+            WorkboxMixin: The new text editor, or a WorkboxPlaceholder if lazy.
         """
         if not group:
             group = self.get_next_available_tab_name()
@@ -116,7 +120,7 @@ class GroupTabWidget(OneTabWidget):
             self.addTab(parent, group_title)
 
         # Create the first editor tab and make it visible
-        editor = parent.add_new_editor(title, prefs)
+        editor = parent.add_new_editor(title, prefs, lazy=lazy)
         self.setCurrentIndex(self.indexOf(parent))
         self.window().focusToWorkbox()
         self.tabBar().setFont(self.window().font())
@@ -400,8 +404,10 @@ class GroupTabWidget(OneTabWidget):
                     orphaned_by_instance=orphaned_by_instance,
                     tempfile=tempfile,
                 )
+                # Building every editor is slow, so add a cheap placeholder that
+                # creates the editor the first time its tab is shown.
                 tab_widget, editor = self.add_new_tab(
-                    group_name, title=name, prefs=localprefs
+                    group_name, title=name, prefs=localprefs, lazy=True
                 )
 
                 editor.__set_last_workbox_name__(editor.__workbox_name__())

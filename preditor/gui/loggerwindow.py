@@ -51,6 +51,7 @@ from .level_buttons import LoggingLevelButton
 from .set_text_editor_path_dialog import SetTextEditorPathDialog
 from .status_label import StatusLabel
 from .workbox_mixin import WorkboxName
+from .workbox_placeholder import WorkboxPlaceholder
 
 logger = logging.getLogger(__name__)
 
@@ -983,6 +984,13 @@ class LoggerWindow(Window):
                 return
             workbox = workboxGroup.currentWidget()
         if workbox is None:
+            return
+
+        if isinstance(workbox, WorkboxPlaceholder) and workbox.__is_placeholder__():
+            # Don't create the editor just to check its font. These calls are
+            # recorded and applied when the editor is created.
+            workbox.__set_margins_font__(font)
+            workbox.__set_font__(font)
             return
 
         if workbox.__font__() != font:

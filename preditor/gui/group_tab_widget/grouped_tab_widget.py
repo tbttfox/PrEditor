@@ -5,12 +5,14 @@ from Qt.QtWidgets import QMessageBox, QToolButton
 
 from ...prefs import VersionTypes
 from ..drag_tab_bar import DragTabBar
+from ..workbox_placeholder import WorkboxPlaceholder
 from ..workbox_text_edit import WorkboxTextEdit
 from .one_tab_widget import OneTabWidget
 
 
 class GroupedTabWidget(OneTabWidget):
     def __init__(self, editor_kwargs, editor_cls=None, core_name=None, *args, **kwargs):
+        self._materializing = False
         super(GroupedTabWidget, self).__init__(*args, **kwargs)
         DragTabBar.install_tab_widget(self, 'grouped_tab_widget')
         self.editor_kwargs = editor_kwargs
@@ -95,11 +97,23 @@ class GroupedTabWidget(OneTabWidget):
                 break
         return is_missing_linked_file
 
-    def add_new_editor(self, title=None, prefs=None):
+    def add_new_editor(self, title=None, prefs=None, lazy=False):
+        """Add a new editor tab.
+
+        Args:
+            title (str, optional): The name of the new tab.
+            prefs (dict, optional): Kwargs used to create the editor.
+            lazy (bool, optional): Add a cheap `WorkboxPlaceholder` instead of
+                creating the editor. The editor is created when the tab is
+                first shown, or when something needs it.
+
+        Returns:
+            WorkboxMixin or WorkboxPlaceholder: The new editor.
+        """
         title = title or self.default_title
 
         title = self.get_next_available_tab_name(title)
-        editor, title = self.default_tab(title, prefs=prefs)
+        editor, title = self.default_tab(title, prefs=prefs, lazy=lazy)
         index = self.addTab(editor, title)
         self.setCurrentIndex(index)
         return editor
@@ -153,7 +167,7 @@ class GroupedTabWidget(OneTabWidget):
 
         self.parent().window().addRecentlyClosedWorkbox(workbox)
 
-    def default_tab(self, title=None, prefs=None):
+    def default_tab(self, title=None, prefs=None, lazy=False):
         title = title or self.default_title
         kwargs = self.editor_kwargs if self.editor_kwargs else {}
         editor = None
@@ -166,6 +180,20 @@ class GroupedTabWidget(OneTabWidget):
         else:
             prefs = {}
 
+        if editor is not None and getattr(editor, "__is_placeholder__", None):
+            if editor.__is_placeholder__():
+                # The editor was never created so there is no text to reload.
+                # Just update the stored data, the text is loaded from disk if
+                # the editor gets created.
+                editor.__reset_cached_text__()
+                editor.__set_filename__(prefs.get("filename", None))
+                editor.__set_last_workbox_name__(editor.__workbox_name__())
+                editor.__determine_been_changed_by_instance__()
+                editor.__set_orphaned_by_instance__(orphaned_by_instance)
+                return editor, title
+            # Stale placeholder, use the real editor it was replaced with.
+            editor = editor.__editor__()
+
         if editor:
             editor.__load_workbox_version_text__(VersionTypes.Last)
 
@@ -177,12 +205,67 @@ class GroupedTabWidget(OneTabWidget):
 
             editor.__determine_been_changed_by_instance__()
             self.window().setWorkboxFontBasedOnConsole(editor)
+        elif lazy:
+            editor = WorkboxPlaceholder(
+                parent=self,
+                editor_cls=self.editor_cls,
+                core_name=self.core_name,
+                **prefs,
+            )
         else:
             editor = self.editor_cls(
                 parent=self, core_name=self.core_name, **prefs, **kwargs
             )
         editor.__set_orphaned_by_instance__(orphaned_by_instance)
         return editor, title
+
+    def materialize_placeholder(self, placeholder):
+        """Create the real editor for a `WorkboxPlaceholder` in this widget and
+        swap it into the placeholder's tab.
+
+        Args:
+            placeholder (WorkboxPlaceholder): The placeholder to replace.
+
+        Returns:
+            WorkboxMixin: The newly created editor.
+        """
+        index = self.indexOf(placeholder)
+        if index == -1:
+            raise ValueError("The placeholder is not a tab of this widget.")
+
+        kwargs = self.editor_kwargs if self.editor_kwargs else {}
+        editor = self.editor_cls(
+            parent=self,
+            core_name=self.core_name,
+            **placeholder.__editor_prefs__(),
+            **kwargs,
+        )
+        placeholder.__transfer_state__(editor)
+
+        title = self.tabText(index)
+        was_current = self.currentIndex() == index
+        # Swapping tabs changes the current index, don't let that create the
+        # editors of the other tabs.
+        self._materializing = True
+        try:
+            self.insertTab(index, editor, title)
+            self.removeTab(index + 1)
+            if was_current:
+                self.setCurrentIndex(index)
+        finally:
+            self._materializing = False
+
+        # Any references to the placeholder now forward to the real editor.
+        # Remove its parent so it's deleted once those references are gone.
+        placeholder.__set_editor__(editor)
+        placeholder.setParent(None)
+
+        editor.__show__()
+        window = self.window()
+        if hasattr(window, "setWorkboxFontBasedOnConsole"):
+            window.setWorkboxFontBasedOnConsole(editor)
+        self.tabBar().updateColorsAndToolTips()
+        return editor
 
     def get_next_available_tab_name(self, name=None):
         """Get the next available tab name, providing a default if needed.
@@ -203,8 +286,17 @@ class GroupedTabWidget(OneTabWidget):
         self.tab_shown(self.currentIndex())
 
     def tab_shown(self, index):
+        if self._materializing:
+            return
+
         editor = self.widget(index)
-        if editor and editor.isVisible():
+        if isinstance(editor, WorkboxPlaceholder):
+            if not self.isVisible():
+                return
+            # The tab is being shown, replace the placeholder with the editor.
+            # This also loads its text.
+            editor = editor.__materialize__()
+        elif editor and editor.isVisible():
             editor.__show__()
 
         if hasattr(self.window(), "setWorkboxFontBasedOnConsole"):
